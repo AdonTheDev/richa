@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiva AI - Text Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #f1f5f9;
+        --text-color: #333;
+        --bubble-bg-sender: #6366f1;
+        --bubble-bg-receiver: #ffffff;
+        --border-color: rgb(226, 232, 240);
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "montserrat", sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      .row {
+        display: flex;
+        padding: 0px 25px;
+      }
+
+      .row1 {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        height: 100% !important;
+        background-color: #3ea99f;
+        color: white;
+        border-bottom: 1px solid var(--border-color);
+        justify-content: center;
+        align-items: center;
+        max-height: 200px;
+        gap: 0.25rem !important;
+      }
+
+      .avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: linear-gradient(to left, #ff5f6d, #ffc371);
+      }
+
+      .bot_title {
+        font-size: 1.75rem;
+        font-weight: 400;
+      }
+
+      .row3 {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 15%;
+        border-top: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+      }
+
+      .row2 {
+        padding: 10px 20px;
+        height: 75vh;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        overflow-y: auto;
+      }
+
+      .message {
+        display: flex;
+        margin-bottom: 15px;
+      }
+
+      .sender {
+        justify-content: flex-start;
+      }
+
+      .receiver {
+        justify-content: flex-end;
+      }
+
+      .message .bubble {
+        max-width: 70%;
+        padding: 10px 15px;
+        /* Add padding */
+        border-radius: 20px;
+        /* Increase border-radius for rounded corners */
+        color: #ffffff;
+      }
+
+      .sender .bubble {
+        background-color: var(--bubble-bg-sender);
+      }
+
+      .receiver .bubble {
+        color: var(--text-color);
+        background-color: var(--bubble-bg-receiver);
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+      }
+
+      .message_text {
+        padding: 10px 0px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .input-control {
+        width: 100%;
+        border: none;
+        background-color: var(--bg-color);
+        padding: 13px;
+        border-radius: 5px;
+      }
+
+      .btn-primary {
+        border: none;
+        color: #fff;
+        background-color: #4f45e4;
+        padding: 13px;
+        border-radius: 5px;
+      }
+
+      .propritery {
+        margin-top: 5px;
+        display: flex;
+        justify-content: center;
+        font-size: 14px;
+        color: #666464;
+      }
+
+      .loader {
+        width: 60px;
+        aspect-ratio: 4;
+        --_g: no-repeat radial-gradient(circle closest-side, #ffffff 90%, #0000);
+        background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+        background-size: calc(100% / 3) 100%;
+        animation: l7 1s infinite linear;
+      }
+
+      @keyframes l7 {
+        33% {
+          background-size: calc(100% / 3) 0%, calc(100% / 3) 100%,
+            calc(100% / 3) 100%;
+        }
+
+        50% {
+          background-size: calc(100% / 3) 100%, calc(100% / 3) 0%,
+            calc(100% / 3) 100%;
+        }
+
+        66% {
+          background-size: calc(100% / 3) 100%, calc(100% / 3) 100%,
+            calc(100% / 3) 0%;
+        }
+      }
+
+      .footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        background-color: #f1f5f9;
+        color: #333;
+        font-size: 14px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .row1 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 10%;
+        background: linear-gradient(to right, #4E65FF, #92EFFD);
+        /* Add your desired background color here */
+        color: white;
+        /* Set text color to white for better contrast */
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .bot_logo {
+        border-radius: 50%;
+        background: #6298d1;
+        padding: 10px;
+        max-width: 60px;
+        width: 100%;
+        -webkit-box-shadow: 0px 0px 15px -8px white;
+        -moz-box-shadow: 0px 0px 15px -8px white;
+        box-shadow: 0px 0px 15px -8px white;
+      }
+
+      .ai_assistant {
+        font-size: 1rem;
+        color: #ffffff;
+        letter-spacing: 0.1ch;
+      }
+      .message {
+        position: relative;
+      }
+      .Qlogo {
+        height: 100%;
+        display: flex;
+        justify-content: end;
+        align-items: end;
+        margin-right: 5px;
+        width: 100%;
+        max-width: 60px;
+      }
+      .Qlogo img {
+        max-width: 70%;
+        background: var(--bubble-bg-sender);
+        padding: 8px;
+        border-radius: 50%;
+        aspect-ratio: 1/1;
+      }
+      .Horizontal-header {
+        background: red;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .Horizontal-header {
+        background: linear-gradient(to right, #4E65FF, #92EFFD);
+        padding-block: 1rem;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .Horizontal {
+        display: flex;
+
+        align-items: center;
+      }
+      .Horizontal > img {
+        margin-right: 0.5rem;
+      }
+      .bot_title {
+        color: white;
+      }
+      .Vertical-header {
+        transition: all 1s ease; /* Add transition for opacity */
+      }
+
+      .hide {
+        opacity: 0;
+        height: 0 !important;
+      }
+
+      .Horizontal-header {
+        display: none;
+        opacity: 0;
+        transition: 1s all !important;
+      }
+      .ScrollHook {
+        transition: 2s all;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="row row1 Vertical-header">
+        <img src="https://media.discordapp.net/attachments/950437905137016932/1241077455066894406/a-sleek-and-modern-ai-logo-featuring-a-stylized-ab-RgGT44BDT7OsZdn7VVqY4w-eUbecBq3RO69rjWWvLYutA.jpeg?ex=66498bb3&is=66483a33&hm=7a075a3eb8985de57d5088073f5f4c31ee80376f56a632c8874c9168677b9136&=&format=webp&width=280&height=280" alt="Quiva AI Logo" class="bot_logo" />
+        <!-- Add your image here -->
+        <span class="bot_title">Ryan AI</span>
+        <span class="ai_assistant">Welcome to Ryan</span>
+      </div>
+
+      <div class="Horizontal-header">
+        <div class="Horizontal">
+          <img src="https://media.discordapp.net/attachments/950437905137016932/1241077455066894406/a-sleek-and-modern-ai-logo-featuring-a-stylized-ab-RgGT44BDT7OsZdn7VVqY4w-eUbecBq3RO69rjWWvLYutA.jpeg?ex=66498bb3&is=66483a33&hm=7a075a3eb8985de57d5088073f5f4c31ee80376f56a632c8874c9168677b9136&=&format=webp&width=280&height=280" alt="Quiva AI Logo" class="bot_logo" />
+          <!-- Add your image here -->
+          <span class="bot_title">Ryan AI</span>
+        </div>
+        <span class="ai_assistant">Ryan. Richa's personal Ai Assistant!</span>
+      </div>
+      <!-- CHAT AREA -->
+      <div class="row row2 ScrollHook">
+        <!-- Chat messages go here -->
+        <div class="message sender">
+          <div class="Qlogo"><img src="https://media.discordapp.net/attachments/950437905137016932/1241077455066894406/a-sleek-and-modern-ai-logo-featuring-a-stylized-ab-RgGT44BDT7OsZdn7VVqY4w-eUbecBq3RO69rjWWvLYutA.jpeg?ex=66498bb3&is=66483a33&hm=7a075a3eb8985de57d5088073f5f4c31ee80376f56a632c8874c9168677b9136&=&format=webp&width=280&height=280" alt="logo" /></div>
+          <div class="bubble">
+            Hi, there! I am Ryan. Richa's personal AI assistant made by Quivox Studio! How may I help you today?
+          </div>
+        </div>
+       
+      </div>
+      <!-- MESSAGE AREA -->
+      <div class="row row3">
+        <div class="message_text">
+          <input
+            type="text"
+            placeholder="Ask your question..."
+            class="input-control"
+          />
+          <button class="btn-primary">Send</button>
+        </div>
+      </div>
+      <!-- FOOTER -->
+      <div class="footer">Made with 💖 by Quivox Studio</div>
+    </div>
+  </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let isDarkMode = false;
+      const root = document.documentElement;
+      if (isDarkMode) {
+        // Dark mode colors
+        root.style.setProperty("--background-color", "#121212");
+        root.style.setProperty("--text-color", "#fff");
+        root.style.setProperty("--bubble-bg-sender", "#6366f1");
+        root.style.setProperty("--bubble-bg-receiver", "#ffffff");
+        root.style.setProperty("--border-color", "rgba(255, 255, 255, 0.1)");
+      } else {
+        // Light mode colors
+        root.style.setProperty("--background-color", "#f1f5f9");
+        root.style.setProperty("--text-color", "#333");
+        root.style.setProperty("--bubble-bg-sender", "#6366f1");
+        root.style.setProperty("--bubble-bg-receiver", "#ffffff");
+        root.style.setProperty("--border-color", "rgb(226, 232, 240)");
+      }
+      const inputField = document.querySelector(".input-control");
+      const sendButton = document.querySelector(".btn-primary");
+      const chatArea = document.querySelector(".row2");
+
+      // Function to handle sending message
+      const sendMessage = async () => {
+        const messageContent = inputField.value.trim();
+        if (messageContent === "") return;
+
+        // Display the user's message in the chat area
+        displayMessage("receiver", messageContent);
+        inputField.value = "";
+        try {
+          // Send the message to the chatbot API
+          displayMessage("sender", "Loading...");
+
+          // Update the sender bubble with the response
+          await updateSenderBubble(messageContent);
+        } catch (error) {
+          console.error("Error fetching response from API:", error);
+        }
+
+        // Clear the input field after sending the message
+      };
+
+      // Event listener for send button click
+      sendButton.addEventListener("click", sendMessage);
+
+      // Event listener for Enter key press
+      inputField.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault(); // Prevent form submission
+          sendMessage(); // Call sendMessage function
+        }
+      });
+      function displayMessage(type, content) {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message", type);
+        messageElement.innerHTML = `<div class="bubble">${content}</div>`;
+        chatArea.appendChild(messageElement);
+
+        // Scroll to the bottom of the chat area
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        if (type === "sender") {
+          const logoElement = document.createElement("div");
+          logoElement.classList.add("Qlogo");
+          logoElement.innerHTML = '<img src="https://media.discordapp.net/attachments/950437905137016932/1241077455066894406/a-sleek-and-modern-ai-logo-featuring-a-stylized-ab-RgGT44BDT7OsZdn7VVqY4w-eUbecBq3RO69rjWWvLYutA.jpeg?ex=66498bb3&is=66483a33&hm=7a075a3eb8985de57d5088073f5f4c31ee80376f56a632c8874c9168677b9136&=&format=webp&width=280&height=280" alt="logo" />';
+          messageElement.insertBefore(logoElement, messageElement.firstChild);
+        }
+      }
+
+      async function updateSenderBubble(messageContent) {
+        // Find the sender bubble in the chat area
+        const senderBubble = chatArea.querySelector(
+          ".message.sender:last-child .bubble"
+        );
+        if (senderBubble) {
+          // Remove any existing content
+          senderBubble.innerHTML = "";
+
+          // Add a loading spinner
+          const loader = document.createElement("div");
+          loader.classList.add("loader");
+          senderBubble.appendChild(loader);
+
+          // Fetching response from API
+          const response = await axios.post(
+            "https://ai.quivoxstudio.cloud/api/v2/generate-response",
+            {
+              text: messageContent,
+              username: "ryan483822",
+              id: '199027303792230',
+              name: 'Ammu'
+            },
+            {
+              headers: {
+                Authorization:
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJ5YW40ODM4MjIiLCJpYXQiOjE3MTYwMTk5Mjd9.UrgipFN2TRd_BAxi1sHdhFCfo4QrUFGt5IxM6Wd3OiE",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(response.data);
+          senderBubble.textContent = response.data;
+        }
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var scrollHook = document.querySelector(".ScrollHook");
+      var verticalHeader = document.querySelector(".Vertical-header");
+      var horizontalHeader = document.querySelector(".Horizontal-header");
+
+      if (scrollHook && verticalHeader && horizontalHeader) {
+        scrollHook.addEventListener("scroll", function () {
+          verticalHeader.classList.add("hide");
+          verticalHeader.style.height = "0";
+
+          horizontalHeader.style.display = "flex";
+          horizontalHeader.style.opacity = "1";
+
+          setTimeout(function () {
+            verticalHeader.style.display = "none";
+          }, 2000);
+        });
+      }
+    });
+  </script>
+</html>
